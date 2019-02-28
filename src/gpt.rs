@@ -1,11 +1,11 @@
 extern crate byteorder;
 extern crate serde;
+extern crate uuid;
 
 use byteorder::{LittleEndian, ByteOrder};
 use serde::Serialize;
 use serde_json::json;
-
-use super::{convert_mixed_endian, format_guid};
+use uuid::Uuid;
 
 #[derive(Debug, Default, Serialize)]
 pub struct GPTHeader {
@@ -50,12 +50,6 @@ impl GPTHeader {
         }
     }
 
-    pub fn convert_and_format_guid(&self) -> String {
-        let mut guid = self.guid.clone();
-        convert_mixed_endian(&mut guid);
-        format_guid(&guid)
-    }
-
     pub fn json_value(&self) -> serde_json::value::Value {
         json!({
             "signature": std::str::from_utf8(
@@ -67,7 +61,7 @@ impl GPTHeader {
             "backupLBA": self.backup_lba,
             "firstUsableLBA": self.first_usable_lba,
             "lastUsableLBA": self.last_uasable_lba,
-            "partitionTableGUID": self.convert_and_format_guid(),
+            "partitionTableGUID": self.guid,
             "partitionEntryLBA": self.partition_entry_lba,
             "numberOfPartitions": self.number_of_partions,
             "sizeOfPartition": self.size_of_partition,
@@ -105,6 +99,12 @@ impl GPTPartitionEntry {
 
         }
     }
+
+    // pub fn json_value(&self) {
+    //     json!({
+    //         ""
+    //     })
+    // }
 }
 
 #[derive(Debug, Default, Serialize)]

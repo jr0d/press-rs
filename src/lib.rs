@@ -28,25 +28,3 @@ pub fn is_gpt(buffer: &[u8]) -> bool {
 pub fn get_disk_guid(buffer: &[u8]) -> Vec<u8> {
     buffer[568..584].to_vec()
 }
-
-// Convertes a mixed endian GUID to big endian
-pub fn convert_mixed_endian(guid: &mut Vec<u8>) {
-    // join these into one Vec and splice?
-    let mut temp_vec = LittleEndian::read_u32(&guid[..4])
-        .to_be_bytes().to_vec();
-    temp_vec.extend(LittleEndian::read_u16(&guid[4..6])
-        .to_be_bytes().iter().cloned());
-    temp_vec.extend(LittleEndian::read_u16(&guid[6..8])
-        .to_be_bytes().iter().cloned());
-    guid.splice(..8, temp_vec.iter().cloned());
-}
-
-pub fn format_guid(guid: &Vec<u8>) -> String {
-    format!("{:08x}-{:04x}-{:04x}-{:04x}-{:012x}",
-        BigEndian::read_u32(&guid[..4]),
-        BigEndian::read_u16(&guid[4..6]),
-        BigEndian::read_u16(&guid[6..8]),
-        BigEndian::read_u16(&guid[8..10]),
-        BigEndian::read_u48(&guid[10..]),
-    )
-}

@@ -1,5 +1,6 @@
 extern crate press;
 extern crate serde;
+extern crate uuid;
 
 use std::io::prelude::*;
 use std::fs::File;
@@ -33,7 +34,9 @@ fn main() -> Result<(), Box<std::error::Error>> {
     let gpt_partitions = GPTPartitionEntryArray::from_reader(&mut fp, &gpt_header).unwrap();
 
     println!("{}", serde_json::to_string_pretty(&gpt_partitions).unwrap());
-    Ok(())
 
+    println!("{:?}", uuid::Uuid::from_slice(&gpt_header.guid));
+
+    Ok(())
 
 }

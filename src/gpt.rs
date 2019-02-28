@@ -9,20 +9,20 @@ use uuid::Uuid;
 
 #[derive(Debug, Default, Serialize)]
 pub struct GPTHeader {
-    signature: u64,
-    revision: u32,
-    header_size: u32,
-    header_crc32: u32,
-    reserved: u32,
-    current_lba: u64,
-    backup_lba: u64,
-    first_usable_lba: u64,
-    last_uasable_lba: u64,
-    guid: Vec<u8>,
-    partition_entry_lba: u64,
-    number_of_partions: u32,
-    size_of_partition: u32,
-    partition_entry_crc32: u32
+    pub signature: u64,
+    pub revision: u32,
+    pub header_size: u32,
+    pub header_crc32: u32,
+    pub reserved: u32,
+    pub current_lba: u64,
+    pub backup_lba: u64,
+    pub first_usable_lba: u64,
+    pub last_uasable_lba: u64,
+    pub guid: Vec<u8>,
+    pub partition_entry_lba: u64,
+    pub number_of_partions: u32,
+    pub size_of_partition: u32,
+    pub partition_entry_crc32: u32
 }
 
 // TODO: Add validation methods
@@ -75,12 +75,12 @@ impl GPTHeader {
 }
 #[derive(Debug, Default, Serialize)]
 pub struct GPTPartitionEntry {
-    partition_type_guid: Vec<u8>,
-    unique_partition_guid: Vec<u8>,
-    starting_lba: u64,
-    ending_lba: u64,
-    attributes: u64,
-    partition_name: String,
+    pub partition_type_guid: Vec<u8>,
+    pub unique_partition_guid: Vec<u8>,
+    pub starting_lba: u64,
+    pub ending_lba: u64,
+    pub attributes: u64,
+    pub partition_name: String,
 }
 
 impl GPTPartitionEntry {
@@ -109,7 +109,7 @@ impl GPTPartitionEntry {
 
 #[derive(Debug, Default, Serialize)]
 pub struct GPTPartitionEntryArray {
-    partitions: Vec<GPTPartitionEntry>
+    pub partitions: Vec<GPTPartitionEntry>
 }
 
 impl GPTPartitionEntryArray {

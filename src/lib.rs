@@ -3,10 +3,6 @@ extern crate byteorder;
 pub mod mbr;
 pub mod gpt;
 
-use std::io::prelude::*;
-use std::fs::File;
-use std::io::SeekFrom;
-
 use byteorder::{LittleEndian, ByteOrder, BigEndian};
 
 static GPT_SIGNATURE: u64 = 0x5452415020494645;

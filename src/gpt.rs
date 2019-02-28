@@ -116,13 +116,13 @@ impl GPTPartitionEntryArray {
     pub fn from_reader<R: std::io::Seek + std::io::Read>(reader: &mut R, header: &GPTHeader) 
             -> Result<GPTPartitionEntryArray, Box<std::error::Error>> {
         let entry_bytes = header.partition_entry_lba * 512;
-        
+
         let mut entry_table_buffer = vec![0 as u8;
             (header.size_of_partition * header.number_of_partions) as usize];
-        
+
         let mut entries: Vec<GPTPartitionEntry> = Vec::with_capacity(
             header.number_of_partions as usize);
-        
+
         reader.seek(std::io::SeekFrom::Start(entry_bytes))?;
         reader.read(&mut entry_table_buffer)?;
 

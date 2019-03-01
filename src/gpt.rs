@@ -7,6 +7,8 @@ use serde::Serialize;
 use serde_json::json;
 use uuid::Uuid;
 
+use super::uuid_from_le_bytes;
+
 #[derive(Debug, Default, Serialize)]
 pub struct GPTHeader {
     pub signature: u64,
@@ -23,17 +25,6 @@ pub struct GPTHeader {
     pub number_of_partions: u32,
     pub size_of_partition: u32,
     pub partition_entry_crc32: u32
-}
-
-pub fn uuid_from_le_bytes(bytes: &[u8]) -> Uuid {
-    if bytes.len() != 16 {
-        panic!("GUIDs must be 16 bytes long")
-    }
-    Uuid::from_fields(
-        LittleEndian::read_u32(&bytes[..4]),
-        LittleEndian::read_u16(&bytes[4..6]),
-        LittleEndian::read_u16(&bytes[6..8]),
-        &bytes[8..]).unwrap()
 }
 
 // TODO: Add validation methods
@@ -84,6 +75,7 @@ impl GPTHeader {
         serde_json::to_string_pretty(&self.json_value()).unwrap()
     }
 }
+
 #[derive(Debug, Default, Serialize)]
 pub struct GPTPartitionEntry {
     pub partition_type_guid: Uuid,

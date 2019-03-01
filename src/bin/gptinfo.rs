@@ -27,15 +27,14 @@ fn main() -> Result<(), Box<std::error::Error>> {
     }
 
     let gpt_header = GPTHeader::new(&buffer[512..]);
+    let gpt_partitions = GPTPartitionEntryArray::from_reader(
+        &mut fp, &gpt_header).unwrap();
 
     println!("{}", to_string_pretty(&json!(
-        {"gptHeader": gpt_header.json_value()})).unwrap());
-
-    let gpt_partitions = GPTPartitionEntryArray::from_reader(&mut fp, &gpt_header).unwrap();
-
-    println!("{}", serde_json::to_string_pretty(&gpt_partitions).unwrap());
-
-    println!("{:?}", uuid::Uuid::from_slice(&gpt_header.guid));
+        {
+            "gptHeader": gpt_header.json_value(),
+            "partitions": gpt_partitions.json_value()
+        })).unwrap());
 
     Ok(())
 

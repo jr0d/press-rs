@@ -2,7 +2,7 @@ extern crate byteorder;
 extern crate serde;
 extern crate uuid;
 
-use byteorder::{LittleEndian, ByteOrder};
+use byteorder::{LittleEndian, ByteOrder, BigEndian};
 use serde::Serialize;
 use serde_json::json;
 use uuid::Uuid;
@@ -18,11 +18,22 @@ pub struct GPTHeader {
     pub backup_lba: u64,
     pub first_usable_lba: u64,
     pub last_uasable_lba: u64,
-    pub guid: Vec<u8>,
+    pub guid: Uuid,
     pub partition_entry_lba: u64,
     pub number_of_partions: u32,
     pub size_of_partition: u32,
     pub partition_entry_crc32: u32
+}
+
+pub fn uuid_from_le_bytes(bytes: &[u8]) -> Uuid {
+    if bytes.len() != 16 {
+        panic!("GUIDs must be 16 bytes long")
+    }
+    Uuid::from_fields(
+        LittleEndian::read_u32(&bytes[..4]),
+        LittleEndian::read_u16(&bytes[4..6]),
+        LittleEndian::read_u16(&bytes[6..8]),
+        &bytes[8..]).unwrap()
 }
 
 // TODO: Add validation methods
@@ -42,7 +53,7 @@ impl GPTHeader {
             backup_lba: LittleEndian::read_u64(&data[32..40]),
             first_usable_lba: LittleEndian::read_u64(&data[40..48]),
             last_uasable_lba: LittleEndian::read_u64(&data[48..56]),
-            guid: data[56..72].to_vec(),
+            guid: uuid_from_le_bytes(&data[56..72]),
             partition_entry_lba: LittleEndian::read_u64(&data[72..80]),
             number_of_partions: LittleEndian::read_u32(&data[80..84]),
             size_of_partition: LittleEndian::read_u32(&data[84..88]),
@@ -75,8 +86,8 @@ impl GPTHeader {
 }
 #[derive(Debug, Default, Serialize)]
 pub struct GPTPartitionEntry {
-    pub partition_type_guid: Vec<u8>,
-    pub unique_partition_guid: Vec<u8>,
+    pub partition_type_guid: Uuid,
+    pub unique_partition_guid: Uuid,
     pub starting_lba: u64,
     pub ending_lba: u64,
     pub attributes: u64,
@@ -89,22 +100,37 @@ impl GPTPartitionEntry {
             panic!("Slice is not large enough to contain a valid GPT partition");
         }
 
+        // Convert byte array to u16 for partition name string
+        let mut utf16: Vec<u16> = Vec::with_capacity(36);
+        for n in (0..72).step_by(2) {
+            let offset = n + 56;
+            let value =  LittleEndian::read_u16(&data[offset..offset+2]);
+            if value == 0 {
+                break;
+            }
+            utf16.push(value);
+        }
+
         GPTPartitionEntry {
-            partition_type_guid: data[..16].to_vec(),
-            unique_partition_guid: data[16..32].to_vec(),
+            partition_type_guid: uuid_from_le_bytes(&data[..16]),
+            unique_partition_guid: uuid_from_le_bytes(&data[16..32]),
             starting_lba: LittleEndian::read_u64(&data[32..40]),
             ending_lba: LittleEndian::read_u64(&data[40..48]),
             attributes: LittleEndian::read_u64(&data[48..56]),
-            partition_name: String::from_utf8(data[56..72].to_vec()).unwrap()
-
+            partition_name: String::from_utf16(&utf16).unwrap()
         }
     }
 
-    // pub fn json_value(&self) {
-    //     json!({
-    //         ""
-    //     })
-    // }
+    pub fn json_value(&self) -> serde_json::value::Value {
+        json!({
+            "partitionTypeGuid": self.partition_type_guid,
+            "uniquePartitionGuid": self.unique_partition_guid,
+            "startingLBA": self.starting_lba,
+            "endingLBA": self.ending_lba,
+            "attibutes": format!("0x{:08X}", self.attributes),
+            "partitionName": self.partition_name 
+        })
+    }
 }
 
 #[derive(Debug, Default, Serialize)]
@@ -134,6 +160,23 @@ impl GPTPartitionEntryArray {
         }
         Ok(GPTPartitionEntryArray {
             partitions: entries
+        })
+    }
+
+    pub fn json_value(&self) -> serde_json::value::Value {
+        let mut temp_vec: Vec<&GPTPartitionEntry> = Vec::with_capacity(
+            self.partitions.len());
+        for partition in self.partitions.iter() {
+            if partition.partition_type_guid == Uuid::nil() {
+                continue;
+            } else {
+                temp_vec.push(partition);
+            }
+        }
+        json!({
+            "gptPartitionEntries": temp_vec,
+            "usablePartitions": self.partitions.len(),
+            "activePartitions": temp_vec.len()
         })
     }
 }

@@ -2,7 +2,7 @@ extern crate byteorder;
 extern crate serde;
 extern crate uuid;
 
-use byteorder::{LittleEndian, ByteOrder, BigEndian};
+use byteorder::{LittleEndian, ByteOrder};
 use serde::Serialize;
 use serde_json::json;
 use uuid::Uuid;

@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     println!("{}", to_string_pretty(&json!(
         {
             "gptHeader": gpt_header.json_value(),
-            "partitions": gpt_partitions.json_value()
+            "gptPartitions": gpt_partitions.json_value()
         })).unwrap());
 
     Ok(())

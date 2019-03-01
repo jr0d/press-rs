@@ -3,7 +3,7 @@ extern crate byteorder;
 pub mod mbr;
 pub mod gpt;
 
-use byteorder::{LittleEndian, ByteOrder, BigEndian};
+use byteorder::{LittleEndian, ByteOrder};
 
 static GPT_SIGNATURE: u64 = 0x5452415020494645;
 static MBR_SIGNATURE: u16 = 0xaa55;

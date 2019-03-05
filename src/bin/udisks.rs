@@ -17,7 +17,12 @@ fn main() -> Result<(), Box<std::error::Error>> {
 
     let target = &args[1];
 
-    let block_devices = get_block_devices_with_property("DEVTYPE", "disk");
-    println!("{}", to_string_pretty(&json!(block_devices)).unwrap());
+    let block_devices = get_block_devices_with_property("DEVNAME", target);
+    if block_devices.len() < 1 {
+        eprintln!("No matches");
+        exit(1);
+    }
+    let block_device = &block_devices[0];
+    println!("{}", to_string_pretty(&json!(block_device.properties())).unwrap());
     Ok(())
 }

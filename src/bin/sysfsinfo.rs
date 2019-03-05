@@ -5,8 +5,10 @@ fn main() {
         println!("{}", d.path().to_str().unwrap());
     }
 
-    press::block::get_block_devices();
+    let devices = press::block::get_disks();
 
-
-
+    for d in devices {
+        println!("{}" , d.properties().get("DEVNAME")
+            .unwrap_or(&"NONAME".to_string()));
+    }
 }

@@ -1,6 +1,6 @@
 # Press v2 (press-rs)
 
-Press will be mondern disk, image, and os deployment application written in Rust. 
+Press will be a mondern disk, image, and os deployment application written in Rust. 
 
 Press uses a declarative configuration format for describing tables, partitions, and volumes.
 

@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         exit(1);
     }
 
-    let gpt_header = GPTHeader::new(&buffer[512..]);
+    let gpt_header = GPTHeader::from_slice(&buffer[512..]);
     let gpt_partitions = GPTPartitionEntryArray::from_reader(
         &mut fp, &gpt_header).unwrap();
 

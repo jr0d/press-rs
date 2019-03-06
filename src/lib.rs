@@ -4,7 +4,7 @@ extern crate uuid;
 pub mod mbr;
 pub mod gpt;
 pub mod sysfs;
-pub mod block;
+pub mod udev;
 
 use byteorder::{LittleEndian, ByteOrder};
 use uuid::Uuid;

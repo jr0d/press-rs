@@ -72,7 +72,7 @@ impl MBR {
         let mut records: Vec<serde_json::Value> = Vec::with_capacity(4);
         for r in self.partition_records.iter() {
             if r.size_in_lba == 0 {
-                // Don't add empty partitions
+                // Don't display empty partitions
                 continue
             }
             records.push(r._json())

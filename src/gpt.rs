@@ -30,7 +30,7 @@ pub struct GPTHeader {
 // TODO: Add validation methods
 impl GPTHeader {
     // slice containing a gpt header starting at index 0
-    pub fn new(data: &[u8]) -> GPTHeader {
+    pub fn from_slice(data: &[u8]) -> GPTHeader {
         if ! (data.len() >= 92) {
             panic!("Provided GPT header is too small")
         }

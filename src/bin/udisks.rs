@@ -6,7 +6,7 @@ extern crate serde;
 use std::process::exit;
 use serde_json::{json, to_string_pretty};
 
-use press::block::*;
+use press::udev::*;
 
 fn main() -> Result<(), Box<std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
@@ -23,6 +23,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         exit(1);
     }
     let block_device = &block_devices[0];
-    println!("{}", to_string_pretty(&json!(block_device.properties())).unwrap());
+    println!("{}", to_string_pretty(
+        &json!(block_device.properties())).unwrap());
     Ok(())
 }

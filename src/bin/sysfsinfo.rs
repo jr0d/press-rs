@@ -5,7 +5,7 @@ fn main() {
         println!("{}", d.path().to_str().unwrap());
     }
 
-    let devices = press::block::get_disks();
+    let devices = press::udev::get_disks();
 
     for d in devices {
         println!("{}" , d.properties().get("DEVNAME")

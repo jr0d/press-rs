@@ -1,8 +1,11 @@
 extern crate serde;
 
-use std::io::Read;
+use std::io::{Read};
 use std::fs::File;
 use std::path::{Path, PathBuf};
+
+// use std::error::Error;
+// use std::fmt;
 
 use serde::Serialize;
 
@@ -16,10 +19,22 @@ pub struct BlockDeviceGeometry {
     size: u64
 }
 
+// Generic attempts
 // pub fn read_number<R: Read, T: std::str::FromStr>(reader: R) -> Result<T, Box<std::error::Error>> {
 //     let mut buf = String::new();
 //     R.read_to_string(&mut buf)?;
 //     Ok(buf.trim().parse()?)
+// }
+
+// pub fn read_number<T>(path: &PathBuf) -> Result<T, Box<std::error::Error>> 
+//         where T: std::str::FromStr, <T as std::str::FromStr>::Err : std::fmt::Debug {
+//     let mut buf = String::new();
+//     let mut fp: File = File::open(path.to_str().unwrap())?;
+//     fp.read_to_string(&mut buf)?;
+//     match buf.trim().parse::<T>() {
+//         Ok(t) => Ok(t),
+//         Err(_) => panic!("Error parsing file")
+//     }
 // }
 
 pub fn read_u64(path: &PathBuf) -> Result<u64, Box<std::error::Error>> {

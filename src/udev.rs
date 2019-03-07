@@ -47,37 +47,37 @@ pub fn get_block_device(device: libudev::Device) -> UdevBlockDeviceInfo {
             }
 }
 
-fn _get_block_devices(enumerator: &mut libudev::Enumerator) -> Vec<UdevBlockDeviceInfo> {
+fn _get_block_devices(enumerator: &mut libudev::Enumerator) -> Result<Vec<UdevBlockDeviceInfo>, Box<std::error::Error>> {
     let mut devices = Vec::new();
-    for d in enumerator.scan_devices().unwrap() {
+    for d in enumerator.scan_devices()? {
         devices.push(get_block_device(d))
     }
-    devices
+    Ok(devices)
 }
 
-fn _get_enumerator(context: &libudev::Context) -> libudev::Enumerator {
-    let mut enumerator = libudev::Enumerator::new(&context).unwrap();
-    enumerator.match_subsystem("block").unwrap();
-    enumerator
+fn _get_enumerator(context: &libudev::Context) -> Result<libudev::Enumerator, Box<std::error::Error>> {
+    let mut enumerator = libudev::Enumerator::new(&context)?;
+    enumerator.match_subsystem("block")?;
+    Ok(enumerator)
 }
 
-pub fn get_block_devices_with_property(name: &str, value: &str) -> Vec<UdevBlockDeviceInfo> {
-    let context = libudev::Context::new().unwrap();
-    let mut enumerator = _get_enumerator(&context);
-    enumerator.match_property(name, value).unwrap();
-    _get_block_devices(&mut enumerator)
+pub fn get_block_devices_with_property(name: &str, value: &str) -> Result<Vec<UdevBlockDeviceInfo>, Box<std::error::Error>> {
+    let context = libudev::Context::new()?;
+    let mut enumerator = _get_enumerator(&context)?;
+    enumerator.match_property(name, value)?;
+    Ok(_get_block_devices(&mut enumerator)?)
 }
 
-pub fn get_block_devices() -> Vec<UdevBlockDeviceInfo> {
-    let context = libudev::Context::new().unwrap();
-    let mut enumerator = _get_enumerator(&context);
-    _get_block_devices(&mut enumerator)
+pub fn get_block_devices() -> Result<Vec<UdevBlockDeviceInfo>, Box<std::error::Error>> {
+    let context = libudev::Context::new()?;
+    let mut enumerator = _get_enumerator(&context)?;
+    Ok(_get_block_devices(&mut enumerator)?)
 }
 
-pub fn get_disks() -> Vec<UdevBlockDeviceInfo> {
-    get_block_devices_with_property("DEVTYPE", "disk")
+pub fn get_disks() -> Result<Vec<UdevBlockDeviceInfo>, Box<std::error::Error>> {
+    Ok(get_block_devices_with_property("DEVTYPE", "disk")?)
 }
 
-pub fn get_partitions() -> Vec<UdevBlockDeviceInfo> {
-    get_block_devices_with_property("DEVTYPE", "partition")
+pub fn get_partitions() -> Result<Vec<UdevBlockDeviceInfo>, Box<std::error::Error>> {
+    Ok(get_block_devices_with_property("DEVTYPE", "partition")?)
 }

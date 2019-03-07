@@ -50,11 +50,15 @@ pub fn read_u64(path: &PathBuf) -> Result<u64, Box<std::error::Error>> {
     Ok(buf.trim().parse()?)
 }
 
+pub fn kernel_path_to_sys(kernel_path: &str) -> String {
+    Path::new("/sys").join(kernel_path).to_str().unwrap().to_string()
+}
+
 impl BlockDeviceGeometry {
-    pub fn from_device(kernel_device_path: &str) -> Result<BlockDeviceGeometry,
+    pub fn from_device(sys_device_path: &str) -> Result<BlockDeviceGeometry,
         Box<std::error::Error>> {
-        let size_path = Path::new(kernel_device_path).join("size");
-        let lba_size_path = Path::new(kernel_device_path)
+        let size_path = Path::new(sys_device_path).join("size");
+        let lba_size_path = Path::new(sys_device_path)
             .join("queue/logical_block_size");
         let logical_blocks = read_u64(&size_path)?;
         let logical_block_size = read_u64(&lba_size_path)?;

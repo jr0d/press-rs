@@ -13,6 +13,7 @@ use serde::Serialize;
 pub static LINUX_SYSFS_BLOCK_DEVICE_PATH: &'static str = "/sys/block";
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BlockDeviceGeometry {
     logical_block_size: u64,
     logical_blocks: u64,
@@ -26,15 +27,20 @@ pub struct BlockDeviceGeometry {
 //     Ok(buf.trim().parse()?)
 // }
 
-// pub fn read_number<T>(path: &PathBuf) -> Result<T, Box<std::error::Error>> 
-//         where T: std::str::FromStr, <T as std::str::FromStr>::Err : std::fmt::Debug {
+// This doesn't work: 
+//  the associated type `<T as std::str::FromStr>::Err` may not live long enough
+// pub fn read_number<'a, T>(path: &'a PathBuf) -> Result<T, Box<std::error::Error>> 
+//         where T: std::str::FromStr,
+//               <T as std::str::FromStr>::Err: std::error::Error {
 //     let mut buf = String::new();
 //     let mut fp: File = File::open(path.to_str().unwrap())?;
 //     fp.read_to_string(&mut buf)?;
-//     match buf.trim().parse::<T>() {
-//         Ok(t) => Ok(t),
-//         Err(_) => panic!("Error parsing file")
-//     }
+//     // match buf.trim().parse::<T>() {
+//     //     Ok(t) => Ok(t),
+//     //     Err(_) => panic!("Error parsing file")
+//     // }
+
+//     Ok(buf.trim().parse()?)
 // }
 
 pub fn read_u64(path: &PathBuf) -> Result<u64, Box<std::error::Error>> {

@@ -8,12 +8,12 @@ use serde::Serialize;
 // I'll likely create a final struct with all of the data the application
 // needs and selectively query these sources
 #[derive(Debug, Serialize)]
-pub struct BlockDevice {
+pub struct UdevBlockDeviceInfo {
     name: String,
     udev_properties: HashMap<String, String>
 }
 
-impl BlockDevice {
+impl UdevBlockDeviceInfo {
     pub fn name(&self) -> &str {
         self.name.as_str()
     }
@@ -23,7 +23,7 @@ impl BlockDevice {
     }
 }
 
-pub fn get_block_device(device: libudev::Device) -> BlockDevice {
+pub fn get_block_device(device: libudev::Device) -> UdevBlockDeviceInfo {
     let mut hm = HashMap::new();
     for property in device.properties() {
         hm.insert(
@@ -37,7 +37,7 @@ pub fn get_block_device(device: libudev::Device) -> BlockDevice {
                 .to_owned()
         );
     }
-    BlockDevice {
+    UdevBlockDeviceInfo {
                 name: device.devnode()
                     .unwrap()
                     .to_str()
@@ -47,7 +47,7 @@ pub fn get_block_device(device: libudev::Device) -> BlockDevice {
             }
 }
 
-fn _get_block_devices(enumerator: &mut libudev::Enumerator) -> Vec<BlockDevice> {
+fn _get_block_devices(enumerator: &mut libudev::Enumerator) -> Vec<UdevBlockDeviceInfo> {
     let mut devices = Vec::new();
     for d in enumerator.scan_devices().unwrap() {
         devices.push(get_block_device(d))
@@ -61,23 +61,23 @@ fn _get_enumerator(context: &libudev::Context) -> libudev::Enumerator {
     enumerator
 }
 
-pub fn get_block_devices_with_property(name: &str, value: &str) -> Vec<BlockDevice> {
+pub fn get_block_devices_with_property(name: &str, value: &str) -> Vec<UdevBlockDeviceInfo> {
     let context = libudev::Context::new().unwrap();
     let mut enumerator = _get_enumerator(&context);
     enumerator.match_property(name, value).unwrap();
     _get_block_devices(&mut enumerator)
 }
 
-pub fn get_block_devices() -> Vec<BlockDevice> {
+pub fn get_block_devices() -> Vec<UdevBlockDeviceInfo> {
     let context = libudev::Context::new().unwrap();
     let mut enumerator = _get_enumerator(&context);
     _get_block_devices(&mut enumerator)
 }
 
-pub fn get_disks() -> Vec<BlockDevice> {
+pub fn get_disks() -> Vec<UdevBlockDeviceInfo> {
     get_block_devices_with_property("DEVTYPE", "disk")
 }
 
-pub fn get_partitions() -> Vec<BlockDevice> {
+pub fn get_partitions() -> Vec<UdevBlockDeviceInfo> {
     get_block_devices_with_property("DEVTYPE", "partition")
 }

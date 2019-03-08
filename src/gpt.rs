@@ -164,10 +164,10 @@ pub struct GPTPartitionEntryArray {
 }
 
 impl GPTPartitionEntryArray {
-    pub fn from_reader<R>(reader: &mut R, header: &GPTHeader)
+    pub fn from_reader<R>(reader: &mut R, header: &GPTHeader, lba_size: usize)
             -> Result<GPTPartitionEntryArray, std::io::Error> 
                 where R: std::io::Read + std::io::Seek {
-        let entry_bytes = header.partition_entry_lba * 512;
+        let entry_bytes = header.partition_entry_lba * lba_size as u64;
 
         let mut entry_table_buffer = vec![0 as u8;
             (header.size_of_partition * header.number_of_partions) as usize];

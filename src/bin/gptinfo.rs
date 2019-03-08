@@ -7,8 +7,7 @@ use std::fs::File;
 use std::process::exit;
 
 use serde_json::{json, to_string_pretty};
-use press::gpt::{GPTHeader, GPTPartitionEntryArray};
-use press::is_gpt;
+use press::gpt::{GPTHeader, GPTPartitionEntryArray, is_gpt};
 
 fn main() -> Result<(), Box<std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
@@ -21,14 +20,14 @@ fn main() -> Result<(), Box<std::error::Error>> {
     let mut fp = File::open(&args[1])?;
     fp.read(&mut buffer)?;
 
-    if ! is_gpt(&buffer) {
+    if ! is_gpt(&buffer, 512) {
         eprintln!("{} does not contain a valid GPT header", args[1]);
         exit(1);
     }
 
     let gpt_header = GPTHeader::from_slice(&buffer[512..]);
     let gpt_partitions = GPTPartitionEntryArray::from_reader(
-        &mut fp, &gpt_header).unwrap();
+        &mut fp, &gpt_header, 512).unwrap();
 
     println!("{}", to_string_pretty(&json!(
         {

@@ -7,7 +7,32 @@ use serde::Serialize;
 use serde_json::json;
 use uuid::Uuid;
 
-use super::uuid_from_le_bytes;
+pub static GPT_SIGNATURE: u64 = 0x5452415020494645;
+
+// Handles a gap in uuid api, submit PR
+pub fn uuid_from_le_bytes(bytes: &[u8]) -> Uuid {
+    if bytes.len() != 16 {
+        panic!("GUIDs must be 16 bytes long")
+    }
+    Uuid::from_fields(
+        LittleEndian::read_u32(&bytes[..4]),
+        LittleEndian::read_u16(&bytes[4..6]),
+        LittleEndian::read_u16(&bytes[6..8]),
+        &bytes[8..]).unwrap()
+}
+
+// check if the buffer contains a gpt signature
+// buffer starts at LBA 0
+pub fn is_gpt(buffer: &[u8], lba_size: usize) -> bool {
+    LittleEndian::read_u64(&buffer[lba_size..lba_size+8]) == GPT_SIGNATURE
+}
+
+// buffer again starts at LBA 0
+pub fn get_disk_guid(buffer: &[u8], lba_size: usize) -> Uuid {
+    let offset = lba_size + 56;
+    uuid_from_le_bytes(&buffer[offset..offset+16])
+}
+
 
 #[derive(Debug, Default, Serialize)]
 pub struct GPTHeader {
@@ -50,6 +75,14 @@ impl GPTHeader {
             size_of_partition: LittleEndian::read_u32(&data[84..88]),
             partition_entry_crc32: LittleEndian::read_u32(&data[88..92])
         }
+    }
+
+    pub fn from_reader<R>(reader: &mut R, lba_size: u32) -> Result<GPTHeader, std::io::Error> 
+        where R: std::io::Read + std::io::Seek {
+            let mut gpt_header_buffer = vec![0 as u8;512];
+            reader.seek(std::io::SeekFrom::Start((lba_size * 2) as u64))?;
+            reader.read(&mut gpt_header_buffer)?;
+            Ok(GPTHeader::from_slice(&gpt_header_buffer))
     }
 
     pub fn json_value(&self) -> serde_json::value::Value {
@@ -131,8 +164,9 @@ pub struct GPTPartitionEntryArray {
 }
 
 impl GPTPartitionEntryArray {
-    pub fn from_reader<R: std::io::Seek + std::io::Read>(reader: &mut R, header: &GPTHeader) 
-            -> Result<GPTPartitionEntryArray, Box<std::error::Error>> {
+    pub fn from_reader<R>(reader: &mut R, header: &GPTHeader)
+            -> Result<GPTPartitionEntryArray, std::io::Error> 
+                where R: std::io::Read + std::io::Seek {
         let entry_bytes = header.partition_entry_lba * 512;
 
         let mut entry_table_buffer = vec![0 as u8;

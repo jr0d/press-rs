@@ -1,31 +1,23 @@
 extern crate serde;
 
-use crate::gpt;
-use crate::mbr;
+use crate::gpt::*;
+use crate::mbr::*;
 use crate::udev;
 use crate::sysfs;
-use crate::{is_gpt, has_mbr};
 
 pub type BlockDeviceResult = Result<BlockDevice, Box<std::error::Error>>;
 
 #[derive(Debug, serde::Serialize)]
 enum PartitionTable {
-    GPT(gpt::GPTHeader),
-    MBR(mbr::MBR)
+    GPT(GPTHeader),
+    MBR(MBR)
 }
-
-#[derive(Debug, serde::Serialize)]
-enum Partitions {
-    GPT(gpt::GPTPartitionEntryArray),
-    MBR(mbr::MBR)
-}
-
 
 #[derive(Debug, serde::Serialize)]
 pub struct BlockDevice {
     geometry: sysfs::BlockDeviceGeometry,
     partition_table: Option<PartitionTable>,
-    gpt_partition_array: Option<gpt::GPTPartitionEntryArray>
+    gpt_partition_array: Option<GPTPartitionEntryArray>
 }
 
 

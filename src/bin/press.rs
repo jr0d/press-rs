@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         exit(1);
     }
 
-    let d = BlockDevice::assemble(&args[1])?;
+    let d = BlockDevice::assemble(&args[1]).expect("Ahhh!!!");
     println!("{:?}", d);
     Ok(())
 }

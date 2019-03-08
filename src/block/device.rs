@@ -1,10 +1,10 @@
 extern crate serde;
 
-// lol.. figure out how to do this correctly
-use super::super::gpt;
-use super::super::mbr;
-use super::super::udev;
-use super::super::sysfs;
+use crate::gpt;
+use crate::mbr;
+use crate::udev;
+use crate::sysfs;
+use crate::{is_gpt, has_mbr};
 
 pub type BlockDeviceResult = Result<BlockDevice, Box<std::error::Error>>;
 

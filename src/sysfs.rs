@@ -51,7 +51,7 @@ pub fn read_u64(path: &PathBuf) -> Result<u64, Box<std::error::Error>> {
 }
 
 pub fn kernel_path_to_sys(kernel_path: &str) -> String {
-    Path::new("/sys").join(kernel_path).to_str().unwrap().to_string()
+    "/sys".to_owned() + kernel_path
 }
 
 impl BlockDeviceGeometry {

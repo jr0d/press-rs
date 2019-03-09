@@ -1,5 +1,3 @@
-// Simply dumps JSON udev information of a block device
-
 extern crate press;
 extern crate serde;
 

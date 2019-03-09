@@ -7,6 +7,8 @@ use serde::Serialize;
 use serde_json::json;
 use uuid::Uuid;
 
+use crate::sysfs::BlockDeviceGeometry;
+
 pub static GPT_SIGNATURE: u64 = 0x5452415020494645;
 
 // Handles a gap in uuid api, submit PR
@@ -33,7 +35,6 @@ pub fn get_disk_guid(buffer: &[u8], lba_size: usize) -> Uuid {
     uuid_from_le_bytes(&buffer[offset..offset+16])
 }
 
-
 #[derive(Debug, Default, Serialize)]
 pub struct GPTHeader {
     pub signature: u64,
@@ -54,6 +55,11 @@ pub struct GPTHeader {
 
 // TODO: Add validation methods
 impl GPTHeader {
+    // Given a presumed drive geometry, creates an empty GPT partition header
+    pub fn new(geometry: &BlockDeviceGeometry) -> GPTHeader {
+         
+    }
+
     // slice containing a gpt header starting at index 0
     pub fn from_slice(data: &[u8]) -> GPTHeader {
         if ! (data.len() >= 92) {
@@ -120,7 +126,7 @@ pub struct GPTPartitionEntry {
 }
 
 impl GPTPartitionEntry {
-    pub fn new(data: &[u8]) -> GPTPartitionEntry {
+    pub fn from_slice(data: &[u8]) -> GPTPartitionEntry {
         if ! (data.len() >= 128) {
             panic!("Slice is not large enough to contain a valid GPT partition");
         }
@@ -181,7 +187,7 @@ impl GPTPartitionEntryArray {
         for n in 0..header.number_of_partions {
             let offset = (n * header.size_of_partition) as usize;
             entries.push(
-                GPTPartitionEntry::new(
+                GPTPartitionEntry::from_slice(
                     &entry_table_buffer[offset..offset+(header.size_of_partition as usize)]))
         }
         Ok(GPTPartitionEntryArray {

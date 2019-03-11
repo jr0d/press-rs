@@ -55,10 +55,13 @@ pub struct GPTHeader {
 
 // TODO: Add validation methods
 impl GPTHeader {
-    // Given a presumed drive geometry, creates an empty GPT partition header
-    pub fn new(geometry: &BlockDeviceGeometry) -> GPTHeader {
-         
-    }
+    // // Given drive geometry, creates an empty GPT partition header
+    // pub fn new(geometry: &BlockDeviceGeometry) -> GPTHeader {
+    //      GPTHeader {
+    //          signature: GPT_SIGNATURE,
+
+    //      }
+    // }
 
     // slice containing a gpt header starting at index 0
     pub fn from_slice(data: &[u8]) -> GPTHeader {

@@ -5,7 +5,18 @@ use byteorder::{LittleEndian, ByteOrder};
 use serde::Serialize;
 use serde_json::json;
 
+static MBR_SIGNATURE: u16 = 0xaa55;
 pub static PROTECTIVE_MBR_OSTYPE: u8 = 0xee;
+
+
+pub fn has_mbr(buffer: &[u8]) -> bool {
+    // MBR signature (16 bit) is located at offset 510
+    LittleEndian::read_u16(&buffer[510..512]) == MBR_SIGNATURE
+}
+
+pub fn is_mbr_protective(buffer: &[u8]) -> bool {
+    buffer[450] == 0xee
+}
 
 #[derive(Debug, Default, Serialize)]
 pub struct MBRPartition {

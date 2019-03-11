@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["get_disk_guid",""],["is_gpt",""],["uuid_from_le_bytes",""]],"static":[["GPT_SIGNATURE",""]],"struct":[["GPTHeader",""],["GPTPartitionEntry",""],["GPTPartitionEntryArray",""]]});

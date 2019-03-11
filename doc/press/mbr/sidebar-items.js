@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["has_mbr",""],["is_mbr_protective",""]],"static":[["PROTECTIVE_MBR_OSTYPE",""]],"struct":[["MBR",""],["MBRPartition",""]]});

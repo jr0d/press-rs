@@ -15,9 +15,9 @@ pub static LINUX_SYSFS_BLOCK_DEVICE_PATH: &'static str = "/sys/block";
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BlockDeviceGeometry {
-    logical_block_size: u64,
-    logical_blocks: u64,
-    size: u64
+    pub logical_block_size: u64,
+    pub logical_blocks: u64,
+    pub size: u64
 }
 
 // Generic attempts

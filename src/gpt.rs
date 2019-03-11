@@ -10,6 +10,10 @@ use uuid::Uuid;
 use crate::sysfs::BlockDeviceGeometry;
 
 pub static GPT_SIGNATURE: u64 = 0x5452415020494645;
+pub static GPT_REVISION: u32 = 0x00010000;
+pub static GPT_HEADERSIZE: u32 = 92;
+pub static GPT_MAX_PART: u32 = 128;
+pub static GPT_PARTITION_SIZE: u32 = 128;
 
 // Handles a gap in uuid api, submit PR
 pub fn uuid_from_le_bytes(bytes: &[u8]) -> Uuid {
@@ -55,13 +59,25 @@ pub struct GPTHeader {
 
 // TODO: Add validation methods
 impl GPTHeader {
-    // // Given drive geometry, creates an empty GPT partition header
-    // pub fn new(geometry: &BlockDeviceGeometry) -> GPTHeader {
-    //      GPTHeader {
-    //          signature: GPT_SIGNATURE,
-
-    //      }
-    // }
+    // Given drive geometry, creates an empty GPT partition header
+    pub fn new(geometry: &BlockDeviceGeometry) -> GPTHeader {
+         GPTHeader {
+            signature: GPT_SIGNATURE,
+            revision: GPT_REVISION,
+            header_size: GPT_HEADERSIZE,
+            header_crc32: 0,
+            reserved: 0,
+            current_lba: 1,
+            backup_lba: geometry.logical_blocks - 1,
+            first_usable_lba: (GPT_MAX_PART * GPT_PARTITION_SIZE) as u64 / geometry.logical_block_size,
+            last_uasable_lba: geometry.logical_blocks - 2,
+            guid: Uuid::new_v4(), // This needs to get converted to a mixed endian GUID
+            partition_entry_lba: 2,
+            number_of_partions: GPT_MAX_PART,
+            size_of_partition: GPT_PARTITION_SIZE,
+            partition_entry_crc32: 0
+         }
+    }
 
     // slice containing a gpt header starting at index 0
     pub fn from_slice(data: &[u8]) -> GPTHeader {

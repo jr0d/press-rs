@@ -10,6 +10,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 uuid = { version = "0.7", features = ["v4", "serde"] }
 error-chain = "0.12"
+crc = "1.8"
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 libudev = "0.2"

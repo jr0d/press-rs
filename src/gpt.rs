@@ -57,6 +57,14 @@ pub struct GPTHeader {
     pub partition_entry_crc32: u32
 }
 
+pub fn gpt_header_as_bytes(header: &GPTHeader) -> Vec<u8> {
+    let mut bytes = vec![0; GPT_HEADERSIZE as usize];
+    LittleEndian::write_u64(&mut bytes[..8], header.signature);
+    LittleEndian::write_u32(&mut bytes[8..12], header.revision);
+    LittleEndian::write_u32(&mut bytes[12..16], header.header_size);
+    bytes
+}
+
 // TODO: Add validation methods
 impl GPTHeader {
     // Given drive geometry, creates an empty GPT partition header

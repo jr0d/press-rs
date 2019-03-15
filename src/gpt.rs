@@ -62,6 +62,10 @@ pub fn gpt_header_as_bytes(header: &GPTHeader) -> Vec<u8> {
     LittleEndian::write_u64(&mut bytes[..8], header.signature);
     LittleEndian::write_u32(&mut bytes[8..12], header.revision);
     LittleEndian::write_u32(&mut bytes[12..16], header.header_size);
+    LittleEndian::write_u32(&mut bytes[16..20], 0); // HeaderCRC32
+    LittleEndian::write_u32(&mut bytes[20..24], 0); // Reserved Bits
+    LittleEndian::write_u64(&mut bytes[24..32], header.current_lba);
+    LittleEndian::write_u64(&mut bytes[32..40], header.backup_lba);
     bytes
 }
 

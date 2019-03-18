@@ -11,3 +11,10 @@ pub mod gpt;
 pub mod sysfs;
 pub mod udev;
 pub mod block;
+pub mod layout;
+
+use layout::LayoutOptions;
+
+struct PressConfiguration {
+    pub layout_options: Option<LayoutOptions>
+}

@@ -1,1 +1,1 @@
-struct EXT;
+pub struct EXT;

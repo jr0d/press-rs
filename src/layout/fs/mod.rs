@@ -19,6 +19,10 @@ pub use ext::EXT;
 // file system name and output the command
 // of coarse there are command line options that belong in struct as well
 // gonna have to thing on this more
-enum FileSystem {
-    ext4(EXT);
+
+pub struct FileSystem {
+    /// The file system type (ext4, ntfs, etc)
+    pub fs_type: String,
+    /// The path to the file system command (mke2fs, mkntfs, etc)
+    pub command_path: String,
 }

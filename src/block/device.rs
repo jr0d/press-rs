@@ -8,16 +8,16 @@ use crate::sysfs;
 pub type BlockDeviceResult = Result<BlockDevice, Box<std::error::Error>>;
 
 #[derive(Debug, serde::Serialize)]
-enum PartitionTable {
+pub enum PartitionTable {
     GPT(GPTHeader),
     MBR(MBR)
 }
 
 #[derive(Debug, serde::Serialize)]
 pub struct BlockDevice {
-    geometry: sysfs::BlockDeviceGeometry,
-    partition_table: Option<PartitionTable>,
-    gpt_partition_array: Option<GPTPartitionEntryArray>
+    pub geometry: sysfs::BlockDeviceGeometry,
+    pub partition_table: Option<PartitionTable>,
+    pub gpt_partition_array: Option<GPTPartitionEntryArray>
 }
 
 

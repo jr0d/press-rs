@@ -7,12 +7,12 @@ use std::path::{Path, PathBuf};
 // use std::error::Error;
 // use std::fmt;
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 // Methods for interactive with the Linux System Filesystem
 pub static LINUX_SYSFS_BLOCK_DEVICE_PATH: &'static str = "/sys/block";
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BlockDeviceGeometry {
     pub logical_block_size: u64,

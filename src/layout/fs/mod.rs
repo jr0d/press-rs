@@ -1,4 +1,7 @@
+extern crate serde;
 pub mod ext;
+
+use serde::Deserialize;
 
 pub use ext::EXT;
 
@@ -20,6 +23,7 @@ pub use ext::EXT;
 // of coarse there are command line options that belong in struct as well
 // gonna have to thing on this more
 
+#[derive(Debug, Deserialize)]
 pub struct FileSystem {
     /// The file system type (ext4, ntfs, etc)
     pub fs_type: String,

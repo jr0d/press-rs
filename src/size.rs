@@ -11,17 +11,20 @@ pub struct Size {
 }
 
 impl Size {
-    fn bytes(&self) -> u64 {
+    pub fn bytes(&self) -> u64 {
         self.bytes()
     }
 }
 
-impl From<&str> for Size {
-    fn from(item: &str) -> Result<Self> {
-        let u64
-    }
+fn split_suffix(value: &str) -> (String, Option<String>) {
+    1
 }
 
+impl From<&str> for Size {
+    fn from(item: &str) -> Result<Self> {
+        Self { _bytes: 0 }
+    }
+}
 
 struct SizeVisitor;
 

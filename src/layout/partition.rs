@@ -2,7 +2,7 @@ extern crate serde;
 
 use serde::Deserialize;
 
-use crate::block::BlockDevice;
+use crate::size::Size;
 use super::fs::FileSystem;
 
 // Supported partition tables
@@ -18,21 +18,6 @@ impl Default for TableFormat {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Size(u64);
-
-impl Default for Size {
-    fn default() -> Self {
-        Self(2u64.pow(20))
-    }
-}
-
-impl PartialEq for Size {
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
-    }
-}
-
 /// Logical representation of a partition table
 #[derive(Debug, Deserialize)]
 pub struct PartitionTable {
@@ -45,11 +30,11 @@ pub struct PartitionTable {
     pub target: Option<String>,
     
     /// The partition table offset
-    #[serde(default)]
+    #[serde(default = "default_pt_size")]
     pub partition_start: Size, // Default 2048s
     
     /// Partition alignment value
-    #[serde(default)]
+    #[serde(default = "default_pt_size")]
     pub alignment: Size, // Default 2048s or LBA size??
     
     /// A list of created partition objects
@@ -71,11 +56,14 @@ impl Default for PartitionTable {
         Self {
             table_type: TableFormat::GPT,
             target: None,
-            partition_start: Size::default(),
-            alignment: Size::default(),
+            partition_start: default_pt_size(),
+            alignment: default_pt_size(),
             partitions: Vec::new()
         }
     }
+}
+fn default_pt_size() -> Size {
+    "1MiB".parse::<Size>().unwrap()
 }
 
 #[derive(Debug, Deserialize)]
@@ -93,12 +81,13 @@ mod tests {
     #[test]
     fn test_partial() {
         let table = PartitionTable {
-            partition_start: Size(512),
+            partition_start: "1MiB".parse().unwrap(),
             .. Default::default()
         };
 
         assert!(table.table_type == TableFormat::GPT);
-        assert!(table.partition_start == Size(512));
+        assert!(table.partition_start.bytes() == 
+                "1MiB".parse::<Size>().unwrap().bytes());
         assert!(table.target.is_none());
     }
 }

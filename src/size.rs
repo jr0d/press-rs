@@ -34,7 +34,6 @@ impl Error for SizeParseError {
 type SizeParseResult<T> = Result<T, SizeParseError>;
 // End Error boiler plate
 
-
 pub fn parse_bytes(value: &str) -> SizeParseResult<u64> {
     let split_value: Vec<&str> = value.splitn(2, ' ')
         .map(|s| s.trim()).collect();
@@ -53,13 +52,13 @@ pub fn parse_bytes(value: &str) -> SizeParseResult<u64> {
             if split_index > 0 {
                 // Found something, try to parse the suffix
                 let (start, end) = split_value[0].split_at(split_index);
-                (start.to_owned(), get_multiplier(end)?)
-            } else { 
-                (split_value[0].to_owned(), 1) 
+                (start, get_multiplier(end)?)
+            } else {
+                (split_value[0], 1)
             }
         },
         false => {
-            (split_value[0].to_owned(), get_multiplier(split_value[1])?)
+            (split_value[0], get_multiplier(split_value[1])?)
         }
     };
     // Finally parse the value as a u64
@@ -199,7 +198,7 @@ fn test_de() {
             "s3": 1048576
         }
     "#;
-    
+
     let sizes: Sizes = serde_json::from_str(json).unwrap();
 
     assert_eq!(sizes.s1.bytes(), 100 * 1 << 20);

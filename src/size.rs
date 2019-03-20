@@ -42,13 +42,13 @@ fn parse_bytes(value: &str) -> SizeParseResult<u64> {
     let value: u64 = match split_value[0].parse() {
         Ok(v) => v,
         Err(_) => return Err(
-            SizeParseError::new(format!("{} is not valid", split_value[0]).as_str()))
+            SizeParseError::new(
+                format!("{} is not valid", split_value[0]).as_str()))
     };
 
-    if split_value.len() < 1 {
-        Ok(value)
-    } else {
-        Ok(value * get_multiplier(split_value[1])?)
+    match split_value.len() < 1 {
+        true => Ok(value),
+        false => Ok(value * get_multiplier(split_value[1])?)
     }
 }
 
@@ -71,7 +71,8 @@ fn get_multiplier(suffix: &str) -> SizeParseResult<u64> {
         "pb" => 10u64.pow(15),
         "pib" => 2u64.pow(50),
         _ => return Err(
-            SizeParseError::new(format!("{} is not a supported suffix", suffix).as_str()))
+            SizeParseError::new(
+                format!("{} is not a supported suffix", suffix).as_str()))
     };
     Ok(v)
 }
@@ -82,6 +83,12 @@ pub struct Size {
 }
 
 impl Size {
+    pub fn new(bytes: u64) -> Self {
+        Self {
+            _bytes: bytes
+        }
+    }
+
     pub fn bytes(&self) -> u64 {
         self._bytes
     }
@@ -103,10 +110,8 @@ impl FromStr for Size {
 fn test_get_multiplier() {
     let val = get_multiplier("XXX");
     assert!(val.is_err());
-    println!("{:?}", val);
 
     let s = Size::from_str("100 GiB").unwrap();
-    println!("{:?}", &s);
     assert!(s.bytes() == 100 * 2u64.pow(30));
 }
 

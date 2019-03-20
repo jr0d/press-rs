@@ -12,6 +12,7 @@ pub mod sysfs;
 pub mod udev;
 pub mod block;
 pub mod layout;
+pub mod size;
 
 use layout::LayoutOptions;
 

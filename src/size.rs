@@ -146,7 +146,10 @@ impl<'de> Visitor<'de> for SizeVistor {
     fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
     where
         E: serde::de::Error {
-            Ok(Size::from_str(s).unwrap())
+        match Size::from_str(s) {
+            Ok(s) => Ok(s),
+            Err(_) => Err(E::custom(format!("Could not convert {}", s)))
+        }
     }
 
     fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
@@ -188,7 +191,7 @@ fn test_de() {
     struct Sizes {
         s1: Size,
         s2: Size,
-        s3: Size
+        s3: Size,
     };
 
     let json = r#"
@@ -204,6 +207,13 @@ fn test_de() {
     assert_eq!(sizes.s1.bytes(), 100 * 1 << 20);
     assert_eq!(sizes.s2.as_symbol("KiB").unwrap(), "2 KiB");
     assert_eq!(sizes.s3.as_sectors(512), 2048);
+    let json = r#"
+        {
+            "s1": "100 MiB",
+            "s2": 2048,
+            "s3": "0x99INVALID !"
+        }
+    "#;
 }
 
 

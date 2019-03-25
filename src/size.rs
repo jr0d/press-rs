@@ -140,7 +140,7 @@ impl<'de> Visitor<'de> for SizeVistor {
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter
-            .write_str("A string which can be parsed to a press::Size structure")
+            .write_str("a string or u64 which can be parsed to a press::Size structure")
     }
 
     fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
@@ -214,6 +214,11 @@ fn test_de() {
             "s3": "0x99INVALID !"
         }
     "#;
+
+    let size_error: serde_json::Result<Sizes> = serde_json::from_str(json);
+
+    println!("{:?}", size_error);
+    assert!(size_error.is_err());
 }
 
 

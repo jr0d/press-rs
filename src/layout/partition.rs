@@ -28,15 +28,15 @@ pub struct PartitionTable {
     /// A target block device structure.
     /// This field is populated once a physical device is selected
     pub target: Option<String>,
-    
+
     /// The partition table offset
     #[serde(default = "default_pt_size")]
     pub partition_start: Size, // Default 2048s
-    
+
     /// Partition alignment value
     #[serde(default = "default_pt_size")]
     pub alignment: Size, // Default 2048s or LBA size??
-    
+
     /// A list of created partition objects
     #[serde(default)]
     pub partitions: Vec<Partition>
@@ -69,9 +69,9 @@ fn default_pt_size() -> Size {
 #[derive(Debug, Deserialize)]
 pub struct Partition {
     // The name of the partition
-    pub name: String,
+    pub name: Option<String>,
     pub file_system: Option<FileSystem>,
-    pub size: u64
+    pub size: Size
 }
 
 #[cfg(test)]
@@ -86,8 +86,30 @@ mod tests {
         };
 
         assert!(table.table_type == TableFormat::GPT);
-        assert!(table.partition_start.bytes() == 
+        assert!(table.partition_start.bytes() ==
                 "1MiB".parse::<Size>().unwrap().bytes());
         assert!(table.target.is_none());
+    }
+
+    #[test]
+    fn test_de() {
+        let data = r#"
+            {
+                "table_type": "GPT",
+                "target": "/dev/loop0",
+                "partition_start": "1 MiB",
+                "alignment": "1 MiB",
+                "partitions": [
+                    {
+                        "name": "pv1",
+                        "size": "100MiB"
+                    }
+                ]
+            }
+        "#;
+
+        let partition_table: PartitionTable = serde_json::from_str(data).unwrap();
+        println!("{:?}", partition_table);
+        assert_eq!(partition_table.partitions[0].name, Some("pv1".to_owned()));
     }
 }

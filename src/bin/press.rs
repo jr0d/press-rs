@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 extern crate press;
 extern crate serde;
 
@@ -16,6 +19,9 @@ fn main() -> Result<(), Box<std::error::Error>> {
         exit(1);
     }
 
+    env_logger::init();
+
+    debug!("Assembling {}", &args[1]);
     let d = BlockDevice::assemble(&args[1]).expect("Ahhh!!!");
     println!("{:?}", d);
 

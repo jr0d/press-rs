@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BlockDevice",""]],"type":[["BlockDeviceResult",""]]});
+initSidebarItems({"enum":[["PartitionTable",""]],"struct":[["BlockDevice",""]],"type":[["BlockDeviceResult",""]]});

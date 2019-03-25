@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["block",""],["gpt",""],["mbr",""],["sysfs",""],["udev",""]]});
+initSidebarItems({"mod":[["block",""],["gpt",""],["layout",""],["mbr",""],["size",""],["sysfs",""],["udev",""]]});

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_disk_guid",""],["is_gpt",""],["uuid_from_le_bytes",""]],"static":[["GPT_SIGNATURE",""]],"struct":[["GPTHeader",""],["GPTPartitionEntry",""],["GPTPartitionEntryArray",""]]});
+initSidebarItems({"fn":[["get_disk_guid",""],["gpt_header_as_bytes",""],["is_gpt",""],["uuid_from_le_bytes",""]],"static":[["GPT_HEADERSIZE",""],["GPT_MAX_PART",""],["GPT_PARTITION_SIZE",""],["GPT_REVISION",""],["GPT_SIGNATURE",""]],"struct":[["GPTHeader",""],["GPTPartitionEntry",""],["GPTPartitionEntryArray",""]]});

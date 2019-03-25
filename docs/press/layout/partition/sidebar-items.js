@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TableFormat",""]],"struct":[["Partition",""],["PartitionTable","Logical representation of a partition table"]]});

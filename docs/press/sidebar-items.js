@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["block",""],["gpt",""],["layout",""],["mbr",""],["size",""],["sysfs",""],["udev",""]]});

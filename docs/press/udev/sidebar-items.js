@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_block_device",""],["get_block_devices",""],["get_block_devices_with_property",""],["get_disks",""],["get_partitions",""]],"struct":[["UdevBlockDeviceInfo",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_block_devices",""],["kernel_path_to_sys",""],["read_u64",""]],"static":[["LINUX_SYSFS_BLOCK_DEVICE_PATH",""]],"struct":[["BlockDeviceGeometry",""]]});
